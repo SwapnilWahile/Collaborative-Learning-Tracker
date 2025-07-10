@@ -5,6 +5,7 @@ import Dashboard from "./pages/Dashboard";
 import Plan from "./pages/Plan";
 import Profile from "./pages/Profile";
 import { PlanProvider } from "./context/PlanContext";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const App = () => {
   return (
