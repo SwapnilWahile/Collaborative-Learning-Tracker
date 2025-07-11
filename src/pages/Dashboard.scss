@@ -1,42 +1,25 @@
-@import "../styles/variables";
-
-.dashboard {
-  background: $bg-color;
-  // min-height: 100vh;
-  padding: 2rem;
-
-  h2 {
-    color: $text-color;
-    margin-bottom: 1rem;
+.add-plan {
+  button {
+    border-radius: 8px;
   }
 
-  p {
-    color: $muted-color;
-  }
-
-  .list-group {
-    .list-group-item {
-      background: $card-bg;
-      border: none;
-      border-radius: $border-radius;
-      box-shadow: $shadow;
-      margin-bottom: 1rem;
-      padding: 1.25rem;
-      transition: all 0.3s;
-
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-
-      &:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
-      }
-
-      span {
-        color: $accent-color;
-        font-weight: 500;
-      }
+  form {
+    input {
+      border-radius: 6px;
     }
   }
+}
+
+.card {
+  border-radius: 10px;
+  transition: transform 0.3s, box-shadow 0.3s;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.modal-backdrop {
+  opacity: 0.5 !important;
 }

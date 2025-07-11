@@ -1,30 +1,30 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { usePlans } from "../context/PlanContext";
-import "./Dashboard.scss";
+import React, { useState } from 'react';
+import AddPlan from '../components/AddPlan';
+// import AddPlan from './AddPlan';
 
 const Dashboard = () => {
-  const { state } = usePlans();
+  const [plans, setPlans] = useState([]);
+
+  const handleAddPlan = (newPlan) => {
+    setPlans([...plans, newPlan]);
+  };
 
   return (
-    <div className="dashboard">
-      <h2>Dashboard</h2>
-      {state.plans.length === 0 ? (
-        <p>No study plans yet. Start by adding one!</p>
-      ) : (
-        <div className="list-group">
-          {state.plans.map(plan => (
-            <Link
-              to={`/plan/${plan.id}`}
-              className="list-group-item list-group-item-action"
-              key={plan.id}
-            >
-              {plan.title}
-              <span>{plan.tasks.filter(t => t.completed).length}/{plan.tasks.length} done</span>
-            </Link>
-          ))}
-        </div>
-      )}
+    <div className="dashboard container py-4">
+      <h2>My Study Plans</h2>
+      <AddPlan onAdd={handleAddPlan} />
+
+      <div className="row mt-4">
+        {plans.length === 0 && <p>No plans yet. Start by adding one!</p>}
+        {plans.map((plan, index) => (
+          <div key={index} className="col-md-4 mb-3">
+            <div className="card p-3 shadow-sm">
+              <h5>{plan.name}</h5>
+              <p>{plan.tasks.length} tasks</p>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
