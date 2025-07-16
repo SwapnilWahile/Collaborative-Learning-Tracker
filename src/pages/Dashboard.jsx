@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
-import AddPlan from '../components/AddPlan';
-// import AddPlan from './AddPlan';
+import React from "react";
+import AddPlan from "../components/AddPlan";
+import { Link } from "react-router-dom";
 
-const Dashboard = () => {
-  const [plans, setPlans] = useState([]);
+const Dashboard = ({ plans, setPlans }) => {
 
   const handleAddPlan = (newPlan) => {
     setPlans([...plans, newPlan]);
@@ -18,10 +17,12 @@ const Dashboard = () => {
         {plans.length === 0 && <p>No plans yet. Start by adding one!</p>}
         {plans.map((plan, index) => (
           <div key={index} className="col-md-4 mb-3">
-            <div className="card p-3 shadow-sm">
-              <h5>{plan.name}</h5>
-              <p>{plan.tasks.length} tasks</p>
-            </div>
+            <Link to={`/plan/${plan.id}`}>
+              <div className="card p-3 shadow-sm">
+                <h5>{plan.name}</h5>
+                <p>{plan.tasks.length} tasks</p>
+              </div>
+            </Link>
           </div>
         ))}
       </div>
