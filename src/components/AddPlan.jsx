@@ -7,7 +7,7 @@ const AddPlan = ({ onAdd }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!planName.trim()) return;
-    onAdd({ name: planName, tasks: [] });
+    onAdd({ id: Date.now().toString(), name: planName, tasks: [] });
     setPlanName("");
     setShowModal(false);
   };
