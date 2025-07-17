@@ -1,13 +1,16 @@
-import React from "react";
 import AddPlan from "../components/AddPlan";
 import { Link } from "react-router-dom";
+import { useSelector, useDispatch } from 'react-redux';
+import { addPlan } from '../store/plansSlice';
 
-const Dashboard = ({ plans, setPlans }) => {
+const Dashboard = () => {
 
-  const handleAddPlan = (newPlan) => {
-    setPlans([...plans, newPlan]);
+  const plans = useSelector(state => state.plans);
+  const dispatch = useDispatch();
+
+  const handleAddPlan = (plan) => {
+    dispatch(addPlan(plan));
   };
-
   return (
     <div className="dashboard container py-4">
       <h2>My Study Plans</h2>

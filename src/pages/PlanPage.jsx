@@ -1,57 +1,47 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+// import { addPlan } from '../store/plansSlice';
+import { addTask, toggleTask } from "../store/plansSlice";
 
-const PlanPage = ({ plans, setPlans }) => {
+const PlanPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   // Find the plan by id (or name)
-  const plan = plans.find(p => p.id === id);
+  const plan = useSelector((state) => state.plans.find((p) => p.id === id));
 
   // Local state for new task input
-  const [taskName, setTaskName] = useState('');
+  const [taskName, setTaskName] = useState("");
 
   useEffect(() => {
     if (!plan) {
       // if no plan found, redirect back to dashboard
-      navigate('/');
+      navigate("/");
     }
   }, [plan, navigate]);
 
   const handleAddTask = (e) => {
-    e.preventDefault();
+    e.preventDefault(); // prevent full page reload
+
     if (!taskName.trim()) return;
 
-    // Update plans array immutably
-    const updatedPlans = plans.map(p => {
-      if (p.id === id) {
-        return {
-          ...p,
-          tasks: [...p.tasks, { name: taskName, completed: false }]
-        };
-      }
-      return p;
-    });
+    dispatch(
+      addTask({
+        planId: id,
+        task: { name: taskName.trim(), completed: false },
+      })
+    );
 
-    setPlans(updatedPlans);
-    setTaskName('');
+    setTaskName(""); // clear input after add
   };
 
-  const toggleTaskComplete = (taskIndex) => {
-    const updatedPlans = plans.map(p => {
-      if (p.id === id) {
-        const updatedTasks = p.tasks.map((t, i) =>
-          i === taskIndex ? { ...t, completed: !t.completed } : t
-        );
-        return { ...p, tasks: updatedTasks };
-      }
-      return p;
-    });
-
-    setPlans(updatedPlans);
+  const handleToggleTask = (taskIndex) => {
+    dispatch(toggleTask({ planId: id, taskIndex }));
   };
 
-  if (!plan) return null; // avoid flicker
+  if (!plan) return <div>Plan not found</div>;
 
   return (
     <div className="container py-4">
@@ -65,30 +55,44 @@ const PlanPage = ({ plans, setPlans }) => {
           placeholder="Add new task"
           className="form-control mb-2"
         />
-        <button type="submit" className="btn btn-success">Add Task</button>
+        <button type="submit" className="btn btn-success" disabled={!taskName.trim()}>
+          Add Task
+        </button>
       </form>
 
       <ul className="list-group">
-        {plan.tasks.length === 0 && <li className="list-group-item">No tasks yet.</li>}
+        {plan.tasks.length === 0 && (
+          <li className="list-group-item">No tasks yet.</li>
+        )}
         {plan.tasks.map((task, index) => (
           <li
             key={index}
-            className={`list-group-item d-flex justify-content-between align-items-center ${task.completed ? 'list-group-item-success' : ''}`}
+            className={`list-group-item d-flex justify-content-between align-items-center ${
+              task.completed ? "list-group-item-success" : ""
+            }`}
           >
-            <span style={{ textDecoration: task.completed ? 'line-through' : 'none' }}>
+            <span
+              style={{
+                textDecoration: task.completed ? "line-through" : "none",
+              }}
+            >
               {task.name}
             </span>
             <button
-              onClick={() => toggleTaskComplete(index)}
-              className={`btn btn-sm ${task.completed ? 'btn-secondary' : 'btn-outline-success'}`}
+              onClick={() => handleToggleTask(index)}
+              className={`btn btn-sm ${
+                task.completed ? "btn-secondary" : "btn-outline-success"
+              }`}
             >
-              {task.completed ? 'Undo' : 'Complete'}
+              {task.completed ? "Undo" : "Complete"}
             </button>
           </li>
         ))}
       </ul>
 
-      <Link to="/" className="btn btn-link mt-3">← Back to Dashboard</Link>
+      <Link to="/" className="btn btn-link mt-3">
+        ← Back to Dashboard
+      </Link>
     </div>
   );
 };
