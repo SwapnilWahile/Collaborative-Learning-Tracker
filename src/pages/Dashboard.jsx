@@ -29,7 +29,7 @@ const Dashboard = () => {
           return (
             <div key={index} className="col-md-3 mb-3">
               <Link to={`/plan/${plan.id}`}>
-                <div className="card p-3 shadow-sm">
+                <div className="card p-3 shadow-sm" style={{height: '145px'}}>
                   <div class="row" title={plan.name}>
                     <h5 class="col-11 text-truncate">{plan.name}</h5>
                   </div>
