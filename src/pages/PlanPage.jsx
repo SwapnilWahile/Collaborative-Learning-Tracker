@@ -11,6 +11,7 @@ const PlanPage = () => {
 
   // Find the plan by id (or name)
   const plan = useSelector((state) => state.plans.find((p) => p.id === id));
+  const userType = useSelector((state) => state.user.type);
 
   // Local state for new task input
   const [taskName, setTaskName] = useState("");
@@ -47,18 +48,24 @@ const PlanPage = () => {
     <div className="container py-4">
       <h2>{plan.name} - Tasks</h2>
 
-      <form onSubmit={handleAddTask} className="my-3">
-        <input
-          type="text"
-          value={taskName}
-          onChange={(e) => setTaskName(e.target.value)}
-          placeholder="Add new task"
-          className="form-control mb-2"
-        />
-        <button type="submit" className="btn btn-success" disabled={!taskName.trim()}>
-          Add Task
-        </button>
-      </form>
+      {userType === "instructor" && (
+        <form onSubmit={handleAddTask} className="my-3">
+          <input
+            type="text"
+            value={taskName}
+            onChange={(e) => setTaskName(e.target.value)}
+            placeholder="Add new task"
+            className="form-control mb-2"
+          />
+          <button
+            type="submit"
+            className="btn btn-success"
+            disabled={!taskName.trim()}
+          >
+            Add Task
+          </button>
+        </form>
+      )}
 
       <ul className="list-group">
         {plan.tasks.length === 0 && (
@@ -78,19 +85,19 @@ const PlanPage = () => {
             >
               {task.name}
             </span>
-            <button
+           {userType === "instructor" && <button
               onClick={() => handleToggleTask(index)}
               className={`btn btn-sm ${
                 task.completed ? "btn-secondary" : "btn-outline-success"
               }`}
             >
               {task.completed ? "Undo" : "Complete"}
-            </button>
+            </button>}
           </li>
         ))}
       </ul>
 
-      <Link to="/" className="btn btn-link mt-3">
+      <Link to="/dashboard" className="btn btn-link mt-3">
         ← Back to Dashboard
       </Link>
     </div>

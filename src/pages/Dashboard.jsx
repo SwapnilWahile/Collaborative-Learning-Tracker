@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { addPlan } from "../store/plansSlice";
 
 const Dashboard = () => {
-  const plans = useSelector((state) => state.plans);
+  const {plans, user} = useSelector((state) => state);
   const dispatch = useDispatch();
 
   const handleAddPlan = (plan) => {
@@ -19,8 +19,8 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard container py-4">
-      <h2>My Study Plans</h2>
-      <AddPlan onAdd={handleAddPlan} />
+      <h2>{user.type === 'instructor' ? 'My Study Plans' : 'Study Plans For You'}</h2>
+      {user.type === 'instructor' && <AddPlan onAdd={handleAddPlan} />}
 
       <div className="row mt-4">
         {plans.length === 0 && <p>No plans yet. Start by adding one!</p>}

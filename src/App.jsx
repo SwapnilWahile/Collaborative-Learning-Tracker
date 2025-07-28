@@ -5,6 +5,7 @@ import Dashboard from "./pages/Dashboard";
 // import Profile from "./pages/Profile";
 import "bootstrap/dist/css/bootstrap.min.css";
 import PlanPage from "./pages/PlanPage";
+import UserSelect from "./pages/UserSelect";
 
 const App = () => {
   return (
@@ -15,7 +16,8 @@ const App = () => {
           {/* <Route path="/" element={<Dashboard />} />
             <Route path="/plan/:id" element={<Plan />} />
             <Route path="/profile" element={<Profile />} /> */}
-          <Route path="/" element={<Dashboard />} />
+          <Route path="/" element={<UserSelect />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/plan/:id" element={<PlanPage />} />
         </Routes>
       </div>
