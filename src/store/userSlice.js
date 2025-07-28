@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  type: null, 
+  type: localStorage.getItem('userType') || null, // hydrate from localStorage if available
 };
 
 const userSlice = createSlice({
@@ -10,11 +10,11 @@ const userSlice = createSlice({
   reducers: {
     setUserType: (state, action) => {
       state.type = action.payload;
-    //   localStorage.setItem("userType", action.payload); // persist in localStorage
+      localStorage.setItem("userType", action.payload); // persist in localStorage
     },
     clearUserType: (state) => {
       state.type = null;
-    //   localStorage.removeItem("userType");
+      localStorage.removeItem("userType");
     },
   },
 });
