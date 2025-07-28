@@ -9,6 +9,6 @@ export const store = configureStore({
   },
 });
 
-// store.subscribe(() => {
-//   localStorage.setItem('plans', JSON.stringify(store.getState().plans));
-// });
+store.subscribe(() => {
+  localStorage.setItem('plans', JSON.stringify(store.getState().plans));
+});
