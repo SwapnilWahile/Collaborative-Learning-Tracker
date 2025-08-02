@@ -4,6 +4,7 @@ import Dashboard from "./pages/Dashboard";
 // import Plan from "./pages/Plan";
 // import Profile from "./pages/Profile";
 import "bootstrap/dist/css/bootstrap.min.css";
+import 'bootstrap-icons/font/bootstrap-icons.css';
 import PlanPage from "./pages/PlanPage";
 import UserSelect from "./pages/UserSelect";
 

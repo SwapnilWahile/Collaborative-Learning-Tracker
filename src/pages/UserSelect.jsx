@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import "./UserSelect.scss";
 import { useDispatch } from "react-redux";
 import { setUserType, clearUserType } from "../store/userSlice";
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 
 export default function UserSelect() {
   const navigate = useNavigate();
