@@ -4,7 +4,9 @@ import { useSelector, useDispatch } from "react-redux";
 import { addPlan } from "../store/plansSlice";
 
 const Dashboard = () => {
-  const {plans, user} = useSelector((state) => state);
+  const user = useSelector((state) => state.user);
+  const plans = useSelector((state) => state.plans);
+
   const dispatch = useDispatch();
 
   const handleAddPlan = (plan) => {
@@ -30,8 +32,8 @@ const Dashboard = () => {
             <div key={index} className="col-md-3 mb-3">
               <Link to={`/plan/${plan.id}`}>
                 <div className="card p-3 shadow-sm" style={{height: '145px'}}>
-                  <div class="row" title={plan.name}>
-                    <h5 class="col-11 text-truncate">{plan.name}</h5>
+                  <div className="row" title={plan.name}>
+                    <h5 className="col-11 text-truncate">{plan.name}</h5>
                   </div>
                   <p>{plan.tasks.length} tasks</p>
 
