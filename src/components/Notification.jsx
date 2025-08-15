@@ -1,9 +1,23 @@
 import React, { useState, useRef, useEffect } from "react";
 import "./Notification.scss";
+import socket from "../utils/socket";
 
-const Notification = ({ count = 0 }) => {
+const Notification = () => {
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const [notifications, setNotifications] = useState([]);
   const wrapperRef = useRef(null);
+
+   // Listen for events from backend
+  useEffect(() => {
+    socket.on("newNotification", (data) => {
+      setNotifications((prev) => [data, ...prev]); // prepend new notification
+    });
+
+    return () => {
+      socket.off("newNotification");
+    };
+  }, []);
+
 
   // Close on outside click
   useEffect(() => {
@@ -25,6 +39,7 @@ const Notification = ({ count = 0 }) => {
     };
   }, [isNotificationOpen]);
 
+  let count = notifications.length;
   return (
     <div className="notification-wrapper" ref={wrapperRef}>
       <div
@@ -40,8 +55,13 @@ const Notification = ({ count = 0 }) => {
       {isNotificationOpen && (
         <div className="notification-dropdown">
           <div className="notification-content">
-            <p>🔔 Here we go — sample notification content</p>
-            <p>You can add a list here</p>
+            {notifications.length === 0 && <p>No new notifications</p>}
+            {notifications.map((n, i) => (
+              <p key={i}>
+                🔔 {n.message} <br />
+                <small>{new Date(n.time).toLocaleTimeString()}</small>
+              </p>
+            ))}
           </div>
         </div>
       )}

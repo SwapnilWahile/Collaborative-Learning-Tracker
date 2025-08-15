@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import socket from "../utils/socket";
 
 const AddPlan = ({ onAdd }) => {
   const [planName, setPlanName] = useState("");
@@ -7,7 +8,13 @@ const AddPlan = ({ onAdd }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!planName.trim()) return;
-    onAdd({ id: Date.now().toString(), name: planName, tasks: [] });
+     const newPlan = { id: Date.now().toString(), name: planName, tasks: [] };
+
+    // Update local UI
+    onAdd(newPlan);
+
+    // Emit to backend so it can notify students
+    socket.emit("addPlan", newPlan);
     setPlanName("");
     setShowModal(false);
   };

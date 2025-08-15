@@ -1,13 +1,24 @@
 import AddPlan from "../components/AddPlan";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { addPlan } from "../store/plansSlice";
+import { useEffect } from "react";
 
-const Dashboard = () => {
+export default function Dashboard(){
   const user = useSelector((state) => state.user);
   const plans = useSelector((state) => state.plans);
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  useEffect(()=>{
+    if(!user.type){
+      navigate('/');
+    }
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
 
   const handleAddPlan = (plan) => {
     dispatch(addPlan(plan));
@@ -60,5 +71,3 @@ const Dashboard = () => {
     </div>
   );
 };
-
-export default Dashboard;
