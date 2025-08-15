@@ -16,7 +16,7 @@ const Navbar = () => {
             <Link className="nav-link d-inline" to="/dashboard">
               Dashboard
             </Link>
-           <Notification count={3} />
+           <Notification  />
 
           </div>
         )}

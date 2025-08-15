@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-// import { addPlan } from '../store/plansSlice';
 import { addTask, toggleTask } from "../store/plansSlice";
+import socket from "../utils/socket";
 
 const PlanPage = () => {
   const { id } = useParams();
@@ -28,18 +28,33 @@ const PlanPage = () => {
 
     if (!taskName.trim()) return;
 
+    const newTask = { name: taskName.trim(), completed: false };
+
+    // Update Redux store
     dispatch(
       addTask({
         planId: id,
-        task: { name: taskName.trim(), completed: false },
+        task: newTask,
       })
     );
+
+    // Emit socket event for notifications
+    socket.emit("addTask", {
+      title: newTask.name, // matches server.js expected "title" field
+      planId: id,
+      planName: plan.name
+    });
 
     setTaskName(""); // clear input after add
   };
 
-  const handleToggleTask = (taskIndex) => {
+  const handleToggleTask = (task, taskIndex) => {
     dispatch(toggleTask({ planId: id, taskIndex }));
+    socket.emit("updateTask", {
+      title: task.name,
+      planId: id,
+      planName: plan.name
+    });
   };
 
   if (!plan) return <div>Plan not found</div>;
@@ -85,14 +100,16 @@ const PlanPage = () => {
             >
               {task.name}
             </span>
-           {userType === "instructor" && <button
-              onClick={() => handleToggleTask(index)}
-              className={`btn btn-sm ${
-                task.completed ? "btn-secondary" : "btn-outline-success"
-              }`}
-            >
-              {task.completed ? "Undo" : "Complete"}
-            </button>}
+            {userType === "instructor" && (
+              <button
+                onClick={() => handleToggleTask(task, index)}
+                className={`btn btn-sm ${
+                  task.completed ? "btn-secondary" : "btn-outline-success"
+                }`}
+              >
+                {task.completed ? "Undo" : "Complete"}
+              </button>
+            )}
           </li>
         ))}
       </ul>
