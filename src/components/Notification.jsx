@@ -5,12 +5,15 @@ import socket from "../utils/socket";
 const Notification = () => {
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
+  const [shouldRingBell, setShouldRingBell] = useState(true);
+  
   const wrapperRef = useRef(null);
 
-   // Listen for events from backend
+  // Listen for events from backend
   useEffect(() => {
     socket.on("newNotification", (data) => {
       setNotifications((prev) => [data, ...prev]); // prepend new notification
+      setShouldRingBell(true);
     });
 
     return () => {
@@ -18,12 +21,12 @@ const Notification = () => {
     };
   }, []);
 
-
   // Close on outside click
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
         setIsNotificationOpen(false);
+        setShouldRingBell(false);
       }
     };
 
@@ -46,9 +49,9 @@ const Notification = () => {
         className="notification"
         onClick={() => setIsNotificationOpen(!isNotificationOpen)}
       >
-        {count > 0 && <span className="notification-badge">{count}</span>}
+        {count > 0 && shouldRingBell && <span className="notification-badge">{count}</span>}
         <div className="bell-container">
-          <div className={`bell ${count > 0 ? 'ring' : ''}`}></div>
+          <div className={`bell ${count > 0 && shouldRingBell ? "ring" : ""}`}></div>
         </div>
       </div>
 
