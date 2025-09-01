@@ -1,26 +1,25 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import React, { Suspense, lazy } from "react";
 import Navbar from "./components/Navbar";
-import Dashboard from "./pages/Dashboard";
-// import Plan from "./pages/Plan";
-// import Profile from "./pages/Profile";
 import "bootstrap/dist/css/bootstrap.min.css";
-import 'bootstrap-icons/font/bootstrap-icons.css';
-import PlanPage from "./pages/PlanPage";
+import "bootstrap-icons/font/bootstrap-icons.css";
 import UserSelect from "./pages/UserSelect";
+
+const PlanPage = lazy(() => import("./pages/PlanPage"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
 
 const App = () => {
   return (
     <Router>
       <Navbar />
       <div className="container mt-4">
-        <Routes>
-          {/* <Route path="/" element={<Dashboard />} />
-            <Route path="/plan/:id" element={<Plan />} />
-            <Route path="/profile" element={<Profile />} /> */}
-          <Route path="/" element={<UserSelect />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/plan/:id" element={<PlanPage />} />
-        </Routes>
+        <Suspense fallback={<h2>Loading...</h2>}>
+          <Routes>
+            <Route path="/" element={<UserSelect />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/plan/:id" element={<PlanPage />} />
+          </Routes>
+        </Suspense>
       </div>
     </Router>
   );
