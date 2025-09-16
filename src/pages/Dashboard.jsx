@@ -1,13 +1,15 @@
 import AddPlan from "../components/AddPlan";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { addPlan } from "../store/plansSlice";
-import { useEffect } from "react";
+import { addPlan, deletePlan, editPlan } from "../store/plansSlice";
+import { useEffect, useState } from "react";
 import { Tooltip } from "bootstrap";
 
 export default function Dashboard() {
   const user = useSelector((state) => state.user);
   const plans = useSelector((state) => state.plans);
+  const [showAddPlanModal, setShowAddPlanModal] = useState(false);
+  const [planToEdit, setPlanToEdit] = useState(null);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -35,12 +37,47 @@ export default function Dashboard() {
     return total === 0 ? 0 : Math.round((completed / total) * 100);
   };
 
+  const handleDelete = (id) => {
+    if (window.confirm("Are you sure you want to delete this plan?")) {
+      dispatch(deletePlan(id));
+    }
+  };
+
+  const handleUpdatePlan = (id, name) => {
+    dispatch(editPlan({ id, name }));
+    setPlanToEdit(null);
+  };
+
+  const closeAddUpdatePlanModal = () => {
+    setPlanToEdit(null);
+    setShowAddPlanModal(!showAddPlanModal);
+  };
+
   return (
     <div className="dashboard container py-4">
       <h2>
         {user.type === "instructor" ? "My Study Plans" : "Study Plans For You"}
       </h2>
-      {user.type === "instructor" && <AddPlan onAdd={handleAddPlan} />}
+      {user.type === "instructor" && (
+        <>
+          <div className="d-flex justify-content-end">
+            <button
+              onClick={() => setShowAddPlanModal(true)}
+              className="btn btn-primary"
+            >
+              + Add New Plan
+            </button>
+          </div>
+        </>
+      )}
+      {showAddPlanModal && (
+        <AddPlan
+          onAdd={handleAddPlan}
+          onUpdate={handleUpdatePlan}
+          planToEdit={planToEdit}
+          closeModal={closeAddUpdatePlanModal}
+        />
+      )}
 
       <div className="row mt-4">
         {plans.length === 0 && <p>No plans yet. Start by adding one!</p>}
@@ -52,12 +89,39 @@ export default function Dashboard() {
                 <div
                   className="card p-3 shadow-sm"
                   title="Click to add or view tasks in this plan"
-                  data-bs-toggle="tooltip"
+                  // data-bs-toggle="tooltip"
                   data-bs-placement="top"
                   style={{ height: "145px" }}
                 >
-                  <div className="row" title={plan.name}>
-                    <h5 className="col-11 text-truncate">{plan.name}</h5>
+                  <div className="d-flex " title={plan.name}>
+                    <h5 className="col-10 text-truncate">{plan.name}</h5>
+                    {user.type === "instructor" && <>
+                      <button
+                        type="button"
+                        title="Update Plan"
+                        className="border-0 bg-transparent"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setShowAddPlanModal(true);
+                          setPlanToEdit(plan);
+                        }}
+                      >
+                        <i class="bi bi-pencil-square"></i>
+                      </button>
+                      <button
+                        type="button"
+                        title="Delete Plan"
+                        className="border-0 bg-transparent"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleDelete(plan.id);
+                        }}
+                      >
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </>}
                   </div>
                   <p>{plan.tasks.length} tasks</p>
 
