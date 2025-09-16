@@ -36,9 +36,19 @@ const plansSlice = createSlice({
     },
     setPlans: (state, action) => {
       return action.payload;
-    }
+    },
+     deletePlan: (state, action) => {
+      return state.filter((plan) => plan.id !== action.payload);
+    },
+    editPlan: (state, action) => {
+      const { id, name } = action.payload;
+      const plan = state.find((p) => p.id === id);
+      if (plan) {
+        plan.name = name;
+      }
+    },
   },
 });
 
-export const { addPlan, addTask, toggleTask, setPlans } = plansSlice.actions;
+export const { addPlan, addTask, toggleTask, setPlans, deletePlan, editPlan } = plansSlice.actions;
 export default plansSlice.reducer;
