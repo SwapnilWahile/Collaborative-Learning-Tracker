@@ -12,12 +12,17 @@ const Navbar = () => {
           Learning Tracker
         </Link>
         {user.type && (
-          <div className="d-flex justify-content-end gap-3 w-25">
+          <div className="d-flex justify-content-end gap-3 col">
             <Link className="nav-link d-inline" to="/dashboard">
               Dashboard
             </Link>
-           <Notification  />
+            {user.type === "instructor" && (
+              <Link className="nav-link d-inline" to="/students">
+                Students
+              </Link>
+            )}
 
+            <Notification />
           </div>
         )}
       </div>

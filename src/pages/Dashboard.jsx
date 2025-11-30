@@ -107,7 +107,7 @@ export default function Dashboard() {
                           setPlanToEdit(plan);
                         }}
                       >
-                        <i class="bi bi-pencil-square"></i>
+                        <i className="bi bi-pencil-square"></i>
                       </button>
                       <button
                         type="button"
@@ -119,7 +119,7 @@ export default function Dashboard() {
                           handleDelete(plan.id);
                         }}
                       >
-                        <i class="bi bi-trash"></i>
+                        <i className="bi bi-trash"></i>
                       </button>
                     </>}
                   </div>
