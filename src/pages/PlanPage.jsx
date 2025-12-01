@@ -42,7 +42,7 @@ const PlanPage = () => {
     socket.emit("addTask", {
       title: newTask.name, // matches server.js expected "title" field
       planId: id,
-      planName: plan.name
+      planName: plan.name,
     });
 
     setTaskName(""); // clear input after add
@@ -53,7 +53,7 @@ const PlanPage = () => {
     socket.emit("updateTask", {
       title: task.name,
       planId: id,
-      planName: plan.name
+      planName: plan.name,
     });
   };
 
@@ -100,7 +100,7 @@ const PlanPage = () => {
             >
               {task.name}
             </span>
-            {userType === "instructor" && (
+            {/* {userType === "instructor" && (
               <button
                 onClick={() => handleToggleTask(task, index)}
                 className={`btn btn-sm ${
@@ -109,7 +109,15 @@ const PlanPage = () => {
               >
                 {task.completed ? "Undo" : "Complete"}
               </button>
-            )}
+            )} */}
+            <button
+              onClick={() => handleToggleTask(task, index)}
+              className={`btn btn-sm ${
+                task.completed ? "btn-secondary" : "btn-outline-success"
+              }`}
+            >
+              {task.completed ? "Undo" : "Complete"}
+            </button>
           </li>
         ))}
       </ul>

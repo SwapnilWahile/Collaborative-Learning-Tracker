@@ -7,6 +7,7 @@ import UserSelect from "./pages/UserSelect";
 
 const PlanPage = lazy(() => import("./pages/PlanPage"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
+const StudentManagement = lazy(() => import("./pages/StudentManagement"));
 
 const App = () => {
   return (
@@ -18,6 +19,7 @@ const App = () => {
             <Route path="/" element={<UserSelect />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/plan/:id" element={<PlanPage />} />
+            <Route path="/students" element={<StudentManagement />} />
           </Routes>
         </Suspense>
       </div>
