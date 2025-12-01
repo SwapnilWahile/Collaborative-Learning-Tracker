@@ -44,7 +44,7 @@ const Notification = () => {
 
   let count = notifications.length;
   return (
-    <div className="notification-wrapper" ref={wrapperRef}>
+    <div className="notification-wrapper d-flex align-items-center" ref={wrapperRef}>
       <div
         className="notification"
         onClick={() => setIsNotificationOpen(!isNotificationOpen)}
