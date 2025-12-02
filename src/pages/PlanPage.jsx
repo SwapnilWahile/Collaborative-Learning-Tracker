@@ -13,7 +13,7 @@ const PlanPage = () => {
   const plan = useSelector((state) => state.plans.find((p) => p.id === id));
   const userType = useSelector((state) => state.user.type);
 
-  const students = JSON.parse(localStorage.getItem("students"));
+  const students = JSON.parse(localStorage.getItem("students")) || [];
 
   const studentId =
     userType === "student"
