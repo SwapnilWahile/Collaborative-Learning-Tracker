@@ -14,7 +14,7 @@ export default function Dashboard() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const students = JSON.parse(localStorage.getItem("students"));
+  const students = JSON.parse(localStorage.getItem("students")) || [];
 
   useEffect(() => {
     if (!user.type) {
