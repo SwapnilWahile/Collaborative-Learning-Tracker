@@ -10,16 +10,28 @@ const Dashboard = lazy(() => import("./pages/Dashboard"));
 const StudentManagement = lazy(() => import("./pages/StudentManagement"));
 
 const App = () => {
+
   useEffect(() => {
-    const clearAuthOnUnload = () => {
-      localStorage.removeItem("userType");
-      localStorage.removeItem("currentStudent");
+    // mark that a session is active
+    sessionStorage.setItem("isReload", "true");
+
+    const handleBeforeUnload = () => {
+      const isReload = sessionStorage.getItem("isReload");
+
+      if (isReload) {
+        // It is a refresh - keep user logged in
+        sessionStorage.removeItem("isReload");
+      } else {
+        // It is a tab close - clear auth
+        localStorage.removeItem("userType");
+        localStorage.removeItem("currentStudent");
+      }
     };
 
-    window.addEventListener("beforeunload", clearAuthOnUnload);
+    window.addEventListener("beforeunload", handleBeforeUnload);
 
     return () => {
-      window.removeEventListener("beforeunload", clearAuthOnUnload);
+      window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, []);
 
