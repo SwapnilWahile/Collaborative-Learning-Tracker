@@ -14,6 +14,8 @@ export default function Dashboard() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const students = JSON.parse(localStorage.getItem("students")) || [];
+
   useEffect(() => {
     if (!user.type) {
       navigate("/");
@@ -31,10 +33,33 @@ export default function Dashboard() {
     dispatch(addPlan(plan));
   };
 
+  // const getProgress = (plan) => {
+  //   const total = plan.tasks.length;
+  //   const completed = plan.tasks.filter((t) => t.completed).length;
+
+  //   return total === 0 ? 0 : Math.round((completed / total) * 100);
+  // };
+
   const getProgress = (plan) => {
-    const total = plan.tasks.length;
-    const completed = plan.tasks.filter((t) => t.completed).length;
-    return total === 0 ? 0 : Math.round((completed / total) * 100);
+    const totalTasks = plan.tasks.length;
+    const totalStudents = students.length; // list of all registered students
+
+    if (totalTasks === 0 || totalStudents === 0) return 0;
+
+    // Calculate progress of each task
+    const taskProgressList = plan.tasks.map((task) => {
+      const completedCount = Array.isArray(task.completed)
+        ? task.completed.length
+        : 0;
+
+      return (completedCount / totalStudents) * 100;
+    });
+
+    // Average progress across all tasks
+    const avgProgress =
+      taskProgressList.reduce((sum, p) => sum + p, 0) / totalTasks;
+
+    return Math.round(avgProgress);
   };
 
   const handleDelete = (id) => {
@@ -95,33 +120,35 @@ export default function Dashboard() {
                 >
                   <div className="d-flex " title={plan.name}>
                     <h5 className="col-10 text-truncate">{plan.name}</h5>
-                    {user.type === "instructor" && <>
-                      <button
-                        type="button"
-                        title="Update Plan"
-                        className="border-0 bg-transparent"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          setShowAddPlanModal(true);
-                          setPlanToEdit(plan);
-                        }}
-                      >
-                        <i className="bi bi-pencil-square"></i>
-                      </button>
-                      <button
-                        type="button"
-                        title="Delete Plan"
-                        className="border-0 bg-transparent"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          handleDelete(plan.id);
-                        }}
-                      >
-                        <i className="bi bi-trash"></i>
-                      </button>
-                    </>}
+                    {user.type === "instructor" && (
+                      <>
+                        <button
+                          type="button"
+                          title="Update Plan"
+                          className="border-0 bg-transparent"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setShowAddPlanModal(true);
+                            setPlanToEdit(plan);
+                          }}
+                        >
+                          <i className="bi bi-pencil-square"></i>
+                        </button>
+                        <button
+                          type="button"
+                          title="Delete Plan"
+                          className="border-0 bg-transparent"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleDelete(plan.id);
+                          }}
+                        >
+                          <i className="bi bi-trash"></i>
+                        </button>
+                      </>
+                    )}
                   </div>
                   <p>{plan.tasks.length} tasks</p>
 

@@ -13,6 +13,13 @@ const PlanPage = () => {
   const plan = useSelector((state) => state.plans.find((p) => p.id === id));
   const userType = useSelector((state) => state.user.type);
 
+  const students = JSON.parse(localStorage.getItem("students")) || [];
+
+  const studentId =
+    userType === "student"
+      ? JSON.parse(localStorage.getItem("currentStudent"))?.id
+      : null;
+
   // Local state for new task input
   const [taskName, setTaskName] = useState("");
 
@@ -28,7 +35,7 @@ const PlanPage = () => {
 
     if (!taskName.trim()) return;
 
-    const newTask = { name: taskName.trim(), completed: false };
+    const newTask = { name: taskName.trim(), completed: [] };
 
     // Update Redux store
     dispatch(
@@ -49,7 +56,7 @@ const PlanPage = () => {
   };
 
   const handleToggleTask = (task, taskIndex) => {
-    dispatch(toggleTask({ planId: id, taskIndex }));
+    dispatch(toggleTask({ planId: id, taskIndex, studentId: studentId }));
     socket.emit("updateTask", {
       title: task.name,
       planId: id,
@@ -86,40 +93,50 @@ const PlanPage = () => {
         {plan.tasks.length === 0 && (
           <li className="list-group-item">No tasks yet.</li>
         )}
-        {plan.tasks.map((task, index) => (
-          <li
-            key={index}
-            className={`list-group-item d-flex justify-content-between align-items-center ${
-              task.completed ? "list-group-item-success" : ""
-            }`}
-          >
-            <span
-              style={{
-                textDecoration: task.completed ? "line-through" : "none",
-              }}
-            >
-              {task.name}
-            </span>
-            {/* {userType === "instructor" && (
-              <button
-                onClick={() => handleToggleTask(task, index)}
-                className={`btn btn-sm ${
-                  task.completed ? "btn-secondary" : "btn-outline-success"
-                }`}
-              >
-                {task.completed ? "Undo" : "Complete"}
-              </button>
-            )} */}
-            <button
-              onClick={() => handleToggleTask(task, index)}
-              className={`btn btn-sm ${
-                task.completed ? "btn-secondary" : "btn-outline-success"
+        {plan.tasks.map((task, index) => {
+          const taskArr = task.completed ?? [];
+          const isTaskCompletedByCurrentStudent =
+            taskArr.indexOf(studentId) !== -1;
+          return (
+            <li
+              key={index}
+              className={`list-group-item d-flex justify-content-between align-items-center ${
+                isTaskCompletedByCurrentStudent ? "list-group-item-success" : ""
               }`}
             >
-              {task.completed ? "Undo" : "Complete"}
-            </button>
-          </li>
-        ))}
+              <span
+                style={{
+                  textDecoration: isTaskCompletedByCurrentStudent
+                    ? "line-through"
+                    : "none",
+                }}
+              >
+                {task.name}
+              </span>
+
+              {userType === "instructor" && (
+                <span>
+                  <i>
+                    {`${taskArr?.length} out of ${students?.length} marked as completed!`}
+                  </i>
+                </span>
+              )}
+
+              {userType !== "instructor" && (
+                <button
+                  onClick={() => handleToggleTask(task, index)}
+                  className={`btn btn-sm ${
+                    isTaskCompletedByCurrentStudent
+                      ? "btn-secondary"
+                      : "btn-outline-success"
+                  }`}
+                >
+                  {isTaskCompletedByCurrentStudent ? "Undo" : "Complete"}
+                </button>
+              )}
+            </li>
+          );
+        })}
       </ul>
 
       <Link to="/dashboard" className="btn btn-link mt-3">

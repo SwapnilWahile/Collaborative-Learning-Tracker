@@ -1,41 +1,145 @@
+import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import "./UserSelect.scss";
-import { useDispatch } from "react-redux";
-import { setUserType, clearUserType } from "../store/userSlice";
-import React, { useEffect } from "react";
+import { setUserType} from "../store/userSlice";
 
-export default function UserSelect() {
+const UserSelect = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    dispatch(clearUserType());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // const students = useSelector((state) => state.students);
+  const students = useSelector((state) => state.students || []);
 
-  const selectUser = (type) => {
-    // localStorage.setItem('userType', type); // or use Redux
-    dispatch(setUserType(type));
+  const [activeTab, setActiveTab] = useState("student");
+
+  // Student login inputs
+  const [studentEmail, setStudentEmail] = useState("");
+  const [studentPass, setStudentPass] = useState("");
+
+  // Instructor login inputs (hard-coded default)
+  const [instructorEmail, setInstructorEmail] = useState("admin@example.com");
+  const [instructorPass, setInstructorPass] = useState("random@know$me");
+
+  const handleStudentLogin = (e) => {
+    e.preventDefault();
+
+    const existing = students.find(
+      (s) => s.email.toLowerCase() === studentEmail.toLowerCase()
+    );
+
+    if (!existing) {
+      alert("Student not found. Please check the email.");
+      return;
+    }
+
+    // store logged student
+    localStorage.setItem("currentStudent", JSON.stringify(existing));
+    dispatch(setUserType("student"));
+
+    navigate("/dashboard");
+  };
+
+  const handleInstructorLogin = (e) => {
+    e.preventDefault();
+    dispatch(setUserType("instructor"));
+    // for now, no validation — just redirect
     navigate("/dashboard");
   };
 
   return (
-    <div className="container text-center py-5">
-      <h2>Select Account Type</h2>
-      <div className="row mt-4 gap-2 justify-content-center">
-        <div className="col-md-4">
-          <div className="card p-4" onClick={() => selectUser("instructor")}>
-            <h4>👨‍🏫 Instructor</h4>
-            <p>Can create and manage plans/tasks</p>
-          </div>
-        </div>
-        <div className="col-md-4">
-          <div className="card p-4" onClick={() => selectUser("student")}>
-            <h4>🎓 Student</h4>
-            <p>View-only access + real-time notifications</p>
-          </div>
-        </div>
+    <div className="d-flex justify-content-center mt-5 align-items-center">
+      <div className="card p-4 shadow" style={{ width: "auto" }}>
+        {/* Tabs */}
+        <ul className="nav nav-tabs mb-3">
+          <li className="nav-item">
+            <button
+              className={`nav-link ${activeTab === "student" ? "active" : ""}`}
+              onClick={() => setActiveTab("student")}
+            >
+              🎓 Student Login
+            </button>
+          </li>
+
+          <li className="nav-item">
+            <button
+              className={`nav-link ${
+                activeTab === "instructor" ? "active" : ""
+              }`}
+              onClick={() => setActiveTab("instructor")}
+            >
+              👨‍🏫 Instructor Login
+            </button>
+          </li>
+        </ul>
+
+        {/* ---------------- STUDENT LOGIN TAB ---------------- */}
+        {activeTab === "student" && (
+          <form onSubmit={handleStudentLogin}>
+            <div className="mb-3">
+              <label>Email</label>
+              <input
+                type="email"
+                className="form-control"
+                value={studentEmail}
+                onChange={(e) => setStudentEmail(e.target.value)}
+                placeholder="Enter your email"
+              />
+            </div>
+
+            <div className="mb-3">
+              <label>Password</label>
+              <input
+                type="password"
+                className="form-control"
+                value={studentPass}
+                onChange={(e) => setStudentPass(e.target.value)}
+                placeholder="Enter your password"
+              />
+            </div>
+
+            <div className="d-flex justify-content-between">
+              <button type="button" className="btn btn-light btn-sm">
+                Forgot Password?
+              </button>
+
+              <button type="submit" className="btn btn-primary">
+                Login
+              </button>
+            </div>
+          </form>
+        )}
+
+        {/* ---------------- INSTRUCTOR LOGIN TAB ---------------- */}
+        {activeTab === "instructor" && (
+          <form onSubmit={handleInstructorLogin}>
+            <div className="mb-3">
+              <label>Email</label>
+              <input
+                type="email"
+                className="form-control"
+                value={instructorEmail}
+                onChange={(e) => setInstructorEmail(e.target.value)}
+              />
+            </div>
+
+            <div className="mb-3">
+              <label>Password</label>
+              <input
+                type="password"
+                className="form-control"
+                value={instructorPass}
+                onChange={(e) => setInstructorPass(e.target.value)}
+              />
+            </div>
+
+            <button type="submit" className="btn btn-primary w-100">
+              Login as Instructor
+            </button>
+          </form>
+        )}
       </div>
     </div>
   );
-}
+};
+
+export default UserSelect;
