@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import socket from "../utils/socket";
+import { useSelector } from "react-redux";
 
 const AddPlan = ({ onAdd, planToEdit, onUpdate, closeModal }) => {
-  const [planName, setPlanName] = useState(planToEdit?planToEdit.name:'');
+  const [planName, setPlanName] = useState(planToEdit ? planToEdit.name : "");
+  const user = useSelector((state) => state.user);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -14,7 +16,11 @@ const AddPlan = ({ onAdd, planToEdit, onUpdate, closeModal }) => {
       onUpdate(planToEdit.id, planName);
     } else {
       onAdd(newPlan);
-      socket.emit("addPlan", newPlan);
+      socket.emit("addPlan", {
+        newPlan,
+        senderId: user.id,
+        senderRole: user.type,
+      });
     }
 
     // Emit to backend so it can notify students
@@ -34,13 +40,16 @@ const AddPlan = ({ onAdd, planToEdit, onUpdate, closeModal }) => {
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content">
             <div className="modal-header">
-              <h5 className="modal-title">{`${planToEdit ? 'Update' : 'Add New'} Plan`}</h5>
+              <h5 className="modal-title">{`${
+                planToEdit ? "Update" : "Add New"
+              } Plan`}</h5>
               <button
                 type="button"
                 className="btn-close"
                 onClick={() => {
                   setPlanName("");
-                  closeModal()}}
+                  closeModal();
+                }}
               ></button>
             </div>
             <div className="modal-body">
@@ -60,7 +69,8 @@ const AddPlan = ({ onAdd, planToEdit, onUpdate, closeModal }) => {
                     type="button"
                     onClick={() => {
                       setPlanName("");
-                      closeModal()}}
+                      closeModal();
+                    }}
                     className="btn btn-secondary"
                   >
                     Cancel

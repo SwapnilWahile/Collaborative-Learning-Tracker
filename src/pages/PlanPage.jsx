@@ -11,12 +11,12 @@ const PlanPage = () => {
 
   // Find the plan by id (or name)
   const plan = useSelector((state) => state.plans.find((p) => p.id === id));
-  const userType = useSelector((state) => state.user.type);
+  const user = useSelector((state) => state.user);
 
   const students = JSON.parse(localStorage.getItem("students")) || [];
 
   const studentId =
-    userType === "student"
+    user.type === "student"
       ? JSON.parse(localStorage.getItem("currentStudent"))?.id
       : null;
 
@@ -47,9 +47,13 @@ const PlanPage = () => {
 
     // Emit socket event for notifications
     socket.emit("addTask", {
-      title: newTask.name, // matches server.js expected "title" field
-      planId: id,
-      planName: plan.name,
+      task: {
+        title: newTask.name, // matches server.js expected "title" field
+        planId: id,
+        planName: plan.name,
+      },
+      senderId: user.id,
+      senderRole: user.type,
     });
 
     setTaskName(""); // clear input after add
@@ -58,9 +62,9 @@ const PlanPage = () => {
   const handleToggleTask = (task, taskIndex) => {
     dispatch(toggleTask({ planId: id, taskIndex, studentId: studentId }));
     socket.emit("updateTask", {
-      title: task.name,
-      planId: id,
-      planName: plan.name,
+      task: { title: task.name, planId: id, planName: plan.name },
+      senderId: user.id,
+      senderRole: user.type,
     });
   };
 
@@ -70,7 +74,7 @@ const PlanPage = () => {
     <div className="container py-4">
       <h2>{plan.name} - Tasks</h2>
 
-      {userType === "instructor" && (
+      {user.type === "instructor" && (
         <form onSubmit={handleAddTask} className="my-3">
           <input
             type="text"
@@ -114,7 +118,7 @@ const PlanPage = () => {
                 {task.name}
               </span>
 
-              {userType === "instructor" && (
+              {user.type === "instructor" && (
                 <span>
                   <i>
                     {`${taskArr?.length} out of ${students?.length} marked as completed!`}
@@ -122,7 +126,7 @@ const PlanPage = () => {
                 </span>
               )}
 
-              {userType !== "instructor" && (
+              {user.type !== "instructor" && (
                 <button
                   onClick={() => handleToggleTask(task, index)}
                   className={`btn btn-sm ${
