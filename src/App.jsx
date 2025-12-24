@@ -2,6 +2,7 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
+  Navigate,
 } from "react-router-dom";
 import React, { Suspense, lazy, useEffect } from "react";
 import Navbar from "./components/Navbar";
@@ -55,7 +56,7 @@ const App = () => {
           <Routes>
             <Route
               path="/"
-              element={<UserSelect />}
+              element={localStorage.getItem("userType")? <Navigate to="/dashboard" replace /> :<UserSelect />}
             />
 
             <Route
