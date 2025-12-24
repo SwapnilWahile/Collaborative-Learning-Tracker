@@ -1,16 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { setUserType} from "../store/userSlice";
+import { setUserType } from "../store/userSlice";
 
 const UserSelect = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  // const students = useSelector((state) => state.students);
   const students = useSelector((state) => state.students || []);
-
-  const [activeTab, setActiveTab] = useState("student");
+  const [activeTab, setActiveTab] = useState("instructor");
 
   // Student login inputs
   const [studentEmail, setStudentEmail] = useState("");
@@ -19,6 +17,13 @@ const UserSelect = () => {
   // Instructor login inputs (hard-coded default)
   const [instructorEmail, setInstructorEmail] = useState("admin@example.com");
   const [instructorPass, setInstructorPass] = useState("random@know$me");
+
+  useEffect(() => {
+    const userType = localStorage.getItem("userType");
+    if (userType) {
+      navigate('/dashboard');
+    }
+  }, [navigate]);
 
   const handleStudentLogin = (e) => {
     e.preventDefault();

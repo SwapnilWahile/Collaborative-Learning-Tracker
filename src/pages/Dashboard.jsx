@@ -12,14 +12,10 @@ export default function Dashboard() {
   const [planToEdit, setPlanToEdit] = useState(null);
 
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const students = JSON.parse(localStorage.getItem("students")) || [];
 
   useEffect(() => {
-    if (!user.type) {
-      navigate("/");
-    }
 
     const tooltipTriggerList = [].slice.call(
       document.querySelectorAll('[data-bs-toggle="tooltip"]')
