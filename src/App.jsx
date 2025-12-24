@@ -1,9 +1,15 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+} from "react-router-dom";
 import React, { Suspense, lazy, useEffect } from "react";
 import Navbar from "./components/Navbar";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import UserSelect from "./pages/UserSelect";
+import { Popover } from "bootstrap";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const PlanPage = lazy(() => import("./pages/PlanPage"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
@@ -30,6 +36,12 @@ const App = () => {
 
     window.addEventListener("beforeunload", handleBeforeUnload);
 
+    const popoverTriggerList = document.querySelectorAll(
+      '[data-bs-toggle="popover"]'
+    );
+
+    popoverTriggerList.forEach((popover) => new Popover(popover));
+
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
@@ -41,10 +53,36 @@ const App = () => {
       <div className="container mt-4">
         <Suspense fallback={<h2>Loading...</h2>}>
           <Routes>
-            <Route path="/" element={<UserSelect />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/plan/:id" element={<PlanPage />} />
-            <Route path="/students" element={<StudentManagement />} />
+            <Route
+              path="/"
+              element={<UserSelect />}
+            />
+
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/plan/:id"
+              element={
+                <ProtectedRoute>
+                  <PlanPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/students"
+              element={
+                <ProtectedRoute>
+                  <StudentManagement />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </Suspense>
       </div>
